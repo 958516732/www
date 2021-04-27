@@ -1,28 +1,123 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Hank Quinlan, Horrible Cop</title>
-    </head>
-    <body>
-        <nav>
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/about">About</a></li>
-                <li><a href="/cv">CV</a></li>
-                <li><a href="/blog">Blog</a></li>
-            </ul>
-        </nav>
-        <div class="container">
-            <div class="blurb">
-                <h1>Hi there, I'm Hank Quinlan!</h1>
-                <p>I'm best known as the horrible cop from <em>A Touch of Evil</em> Don't trust me. <a href="/about">Read more about my life...</a></p>
-            </div><!-- /.blurb -->
-        </div><!-- /.container -->
-        <footer>
-            <ul>
-                <li><a href="mailto:hankquinlanhub@gmail.com">email</a></li>
-                <li><a href="https://github.com/hankquinlan">github.com/hankquinlan</a></li>
-            </ul>
-        </footer>
-    </body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Coolpy7ChatDemo</title>
+    <script src='https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js'></script>
+    <link rel="stylesheet" href="./css/index.css">
+    <!-- <link rel='stylesheet prefetch' href='https://fonts.googleapis.com/css?family=Dosis:200,300,400'> -->
+</head>
+<body>
+<div class="container">
+    <h1>
+        <span class="blue">C</span>
+        <span class="red">oo</span>
+        <span class="purple">l</span>
+        <span class="green">p</span>
+        <span class="pink">y</span>
+        <small>7.</small>
+    </h1>
+    <form>
+        <div class="formData">
+            <div class="formDiv">
+                <input id="userid" type="text" required>
+                <label class="label">用户名</label>
+            </div>
+            <div class="formDiv">
+                <input id="email" type="text" required>
+                <label class="label">密码</label>
+            </div>
+        </div>
+
+        <button id="submit">
+            <span class="text">登录</span>
+            <div class="spinner">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+            </div>
+        </button>
+    </form>
+</div>
+
+<script >
+    function getck(sname){
+        var ca=document.cookie.split("; "); 
+        for(var i=0;i<ca.length;i++){
+            arr=ca[i].split("=");
+            if(sname==arr[0]){
+                return arr[1];
+            }
+        }
+        return null;
+    } 
+    $(document).ready(function() {
+        //submit function
+       if(getck("binggan")){
+         window.location.href = 'chat.html';
+        }
+
+        $('#submit').click(function(e) {
+            var btn = $(this),
+                spinner = btn.children('.spinner'),
+                text = btn.children('.text');
+            if ($("form")[0].checkValidity()) {
+                e.preventDefault();
+
+                text.hide(0);
+                spinner.fadeIn();
+
+                var userid = $('#userid').val();
+                var mail = $('#email').val();
+                if (userid.length >= 0 && mail.length >= 0) {
+                    $('#userid').val(null);
+                    $('#email').val(null);
+                    // console.log('validated!');
+                    spinner.fadeOut(300, function() {
+                        text.html('Succcess!!!').show(0);
+                        btn.prop('disabled', true);
+                        $('.captchaDiv').toggleClass('close');
+                        $('.formData').addClass('disabled');
+                        // window.location.href = 'chat.html?uid='+userid+'&email='+mail;
+                            $.ajax({
+                                url:"CSS/php/login.php",
+                                type: 'post',
+                                //async:false,
+                                data: 'Username='+userid+'&Password='+mail,
+                                xhrFields: {
+                                    withCredentials: true
+                                },
+                                error: function(request) {
+                                    alert("登录失败");
+                                },
+                                success:function(result,status,xhr){
+                                    switch(result) {
+                                        case "true":
+                                            window.location.href = 'chat.html';
+                                            break;
+                                        case "1":
+                                            alert("密码错误");
+                                            break;
+                                        case "2":
+                                            alert("请注册后登录");
+                                            break;
+                                        default:
+                                            alert("登录异常");
+                                    } 	
+                                }
+                            });
+                    
+                    });
+                } else {
+                    spinner.fadeOut(300, function() {
+                        text.html('登陆失败 :(').show(0);
+                    });
+                }
+            }
+        });
+    });
+</script>
+</body>
 </html>
